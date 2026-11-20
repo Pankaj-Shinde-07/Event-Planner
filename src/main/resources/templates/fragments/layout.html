@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="topbar" class="topbar">
+    <a class="brand" th:href="@{/}">
+        <span class="brand-mark">E</span>
+        <span>Event Planner<small>Make room for the moment</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+        <a th:href="@{/}">Overview</a>
+        <a th:href="@{/events}">Events</a>
+        <a th:href="@{/themes}">Themes</a>
+        <a th:href="@{/decorations}">Decorations</a>
+        <a th:href="@{/bookings}">Bookings</a>
+    </nav>
+    <a class="button button-small" th:href="@{/events/new}">+ New event</a>
+</header>
+</body>
+</html>

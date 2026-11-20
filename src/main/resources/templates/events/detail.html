@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${event.eventName} + ' | Event Planner'">Event details</title><link rel="stylesheet" th:href="@{/css/styles.css}"></head>
+<body><div class="page-shell">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <main>
+        <section class="detail-heading">
+            <div><a class="back-link" th:href="@{/events}">← All events</a><p class="eyebrow" th:text="${event.eventType}">BIRTHDAY</p><h1 th:text="${event.eventName}">Birthday celebration</h1><p class="detail-subtitle"><span th:text="${#temporals.format(event.eventDate, 'EEEE, dd MMM yyyy')}">Saturday, 20 Nov 2026</span> <span>·</span> <span th:text="${event.venue}">Pune</span></p></div>
+            <div class="detail-actions"><span class="status-pill" th:classappend="${' status-' + #strings.toLowerCase(event.status.name())}" th:text="${event.status}">DRAFT</span><a class="button button-outline" th:if="${event.booking == null}" th:href="@{/events/{id}/edit(id=${event.id})}">Edit details</a><form th:if="${event.booking == null}" method="post" th:action="@{/events/{id}/delete(id=${event.id})}" onsubmit="return confirm('Delete this event draft?')"><button class="button button-quiet" type="submit">Delete draft</button></form></div>
+        </section>
+        <section class="detail-layout">
+            <div class="detail-main">
+                <article class="panel event-summary">
+                    <div class="section-heading small-heading"><div><p class="eyebrow">THE PLAN</p><h2>Event overview</h2></div></div>
+                    <div class="summary-grid"><div><span>Theme</span><strong th:text="${event.theme != null ? event.theme.themeName : 'Not selected'}">Birthday Spark</strong></div><div><span>Guests</span><strong th:text="${event.guestCount}">24</strong></div><div><span>Budget</span><strong th:text="${'₹ ' + #numbers.formatDecimal(event.budget, 1, 2)}">₹ 10,000.00</strong></div></div>
+                </article>
+
+                <article class="panel selected-items">
+                    <div class="section-heading small-heading"><div><p class="eyebrow">YOUR DECOR</p><h2>Selected items</h2></div><span class="count-badge" th:text="${event.decorations.size() + ' items'}">0 items</span></div>
+                    <div class="empty-inline" th:if="${#lists.isEmpty(event.decorations)}">Your selected decorations will appear here.</div>
+                    <div class="selected-line" th:each="line : ${event.decorations}">
+                        <div><strong th:text="${line.item.itemName}">Balloon arch</strong><small th:text="${line.quantity + ' × ₹ ' + #numbers.formatDecimal(line.unitPrice, 1, 2)}">1 × ₹ 1,800.00</small></div>
+                        <strong th:text="${'₹ ' + #numbers.formatDecimal(line.subtotal, 1, 2)}">₹ 1,800.00</strong>
+                        <form th:if="${event.status.name() == 'DRAFT'}" method="post" th:action="@{/events/{id}/decorations/{decorationId}/remove(id=${event.id}, decorationId=${line.id})}"><button class="icon-button" type="submit" aria-label="Remove item">×</button></form>
+                    </div>
+                    <div class="total-row"><span>Decoration estimate</span><strong th:text="${'₹ ' + #numbers.formatDecimal(event.selectedItemsTotal, 1, 2)}">₹ 0.00</strong></div>
+                </article>
+
+                <article class="panel request-panel" th:if="${event.booking == null}">
+                    <div><p class="eyebrow">READY FOR THE NEXT STEP?</p><h2>Request this booking</h2><p>A request keeps your selected items and estimated total together. It remains pending until confirmed.</p></div>
+                    <form method="post" th:action="@{/events/{id}/booking(id=${event.id})}"><button class="button" type="submit" th:disabled="${#lists.isEmpty(event.decorations)}">Send booking request <span aria-hidden="true">→</span></button></form>
+                </article>
+                <article class="panel booking-summary" th:if="${event.booking != null}">
+                    <p class="eyebrow">BOOKING REQUEST</p><h2 th:text="${'Request #' + event.booking.id}">Request #1</h2>
+                    <p>Status: <strong th:text="${event.booking.bookingStatus}">PENDING</strong> · Payment: <strong th:text="${event.booking.paymentStatus}">PENDING</strong></p>
+                    <p class="muted">Payment is not collected in this demo. Booking and payment statuses are tracked separately.</p>
+                    <a class="text-link" th:href="@{/bookings}">Manage booking →</a>
+                </article>
+            </div>
+
+            <aside class="panel item-picker">
+                <div class="section-heading small-heading"><div><p class="eyebrow">BUILD YOUR SETUP</p><h2>Add decorations</h2></div></div>
+                <p class="aside-intro">Add a few details that bring the theme to life.</p>
+                <div class="catalog-list">
+                    <article class="catalog-item" th:each="item : ${items}">
+                        <div class="catalog-swatch" th:classappend="${' swatch-' + #strings.toLowerCase(item.category)}"><span>✿</span></div>
+                        <div class="catalog-copy"><strong th:text="${item.itemName}">Balloon arch</strong><small th:text="${item.category + ' · ' + item.availableQuantity + ' available'}">Backdrop</small><b th:text="${'₹ ' + #numbers.formatDecimal(item.price, 1, 2)}">₹ 1,800.00</b></div>
+                        <form th:if="${event.status.name() == 'DRAFT'}" method="post" th:action="@{/events/{id}/decorations(id=${event.id})}" class="add-item-form">
+                            <input type="hidden" name="itemId" th:value="${item.id}"><label class="sr-only" th:for="${'qty-' + item.id}">Quantity</label><input type="number" min="1" th:max="${item.availableQuantity}" value="1" name="quantity" th:id="${'qty-' + item.id}"><button type="submit" class="add-button" aria-label="Add item">+</button>
+                        </form>
+                        <span class="locked-note" th:if="${event.status.name() != 'DRAFT'}">Locked</span>
+                    </article>
+                </div>
+                <a class="text-link aside-link" th:href="@{/decorations}">View full catalogue →</a>
+            </aside>
+        </section>
+    </main>
+    <footer class="site-footer"><span>Event Planner</span><span>One detail at a time.</span></footer>
+</div></body></html>

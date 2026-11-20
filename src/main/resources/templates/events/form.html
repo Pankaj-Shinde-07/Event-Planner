@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${pageTitle} + ' | Event Planner'">Create event</title><link rel="stylesheet" th:href="@{/css/styles.css}"></head>
+<body><div class="page-shell">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <main>
+        <section class="page-heading narrow-heading"><div><p class="eyebrow">START WITH THE DETAILS</p><h1 th:text="${pageTitle}">Create an event</h1><p>We’ll keep the occasion details together while you plan the look.</p></div></section>
+        <section class="panel form-panel">
+            <form method="post" th:action="@{${formAction}}" th:object="${eventForm}" class="form-grid">
+                <div class="field full"><label for="eventName">Event name</label><input id="eventName" type="text" th:field="*{eventName}" placeholder="e.g. Mum's 60th birthday"><small class="field-error" th:errors="*{eventName}"></small></div>
+                <div class="field"><label for="eventType">Occasion</label><select id="eventType" th:field="*{eventType}"><option value="">Choose an occasion</option><option>Birthday</option><option>Anniversary</option><option>Baby Shower</option><option>Naming Ceremony</option><option>Housewarming</option><option>Other Celebration</option></select><small class="field-error" th:errors="*{eventType}"></small></div>
+                <div class="field"><label for="eventDate">Event date</label><input id="eventDate" type="date" th:field="*{eventDate}"><small class="field-error" th:errors="*{eventDate}"></small></div>
+                <div class="field full"><label for="venue">Venue or location</label><input id="venue" type="text" th:field="*{venue}" placeholder="Area, venue or address"><small class="field-error" th:errors="*{venue}"></small></div>
+                <div class="field"><label for="guestCount">Expected guests</label><input id="guestCount" type="number" min="1" th:field="*{guestCount}"><small class="field-error" th:errors="*{guestCount}"></small></div>
+                <div class="field"><label for="budget">Budget (INR)</label><div class="input-prefix"><span>₹</span><input id="budget" type="number" step="0.01" min="0" th:field="*{budget}"></div><small class="field-error" th:errors="*{budget}"></small></div>
+                <div class="field full"><label for="themeId">Starting theme <span class="label-optional">Optional</span></label><select id="themeId" th:field="*{themeId}"><option value="">I’ll choose later</option><option th:each="theme : ${themes}" th:value="${theme.id}" th:text="${theme.themeName}">Birthday Spark</option></select></div>
+                <div class="form-actions full"><a class="button button-quiet" th:href="${event != null ? '/events/' + event.id : '/events'}">Cancel</a><button class="button" type="submit">Save event</button></div>
+            </form>
+        </section>
+    </main>
+</div></body></html>

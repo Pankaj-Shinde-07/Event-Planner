@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bookings | Event Planner</title><link rel="stylesheet" th:href="@{/css/styles.css}"></head>
+<body><div class="page-shell">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <main>
+        <section class="page-heading"><div><p class="eyebrow">REQUESTS AND CONFIRMATIONS</p><h1>Bookings</h1><p>Track requests for your event plans. Payment is kept separate and is not collected here.</p></div><a class="button button-outline" th:href="@{/events}">View events</a></section>
+        <section class="panel">
+            <div class="empty-state compact" th:if="${#lists.isEmpty(bookings)}"><div class="empty-icon">◷</div><h3>No booking requests yet</h3><p>Choose decorations for an event and send a request when you’re ready.</p><a class="button" th:href="@{/events}">Browse events</a></div>
+            <div class="table-wrap" th:unless="${#lists.isEmpty(bookings)}"><table><thead><tr><th>Request</th><th>Event</th><th>Event date</th><th>Estimate</th><th>Payment</th><th>Status / action</th></tr></thead>
+                <tbody><tr th:each="booking : ${bookings}">
+                    <td><strong th:text="${'#' + booking.id}">#1</strong><small class="table-subtitle" th:text="${#temporals.format(booking.bookingDate, 'dd MMM yyyy')}">20 Nov 2026</small></td>
+                    <td><a class="table-title" th:href="@{/events/{id}(id=${booking.event.id})}" th:text="${booking.event.eventName}">Celebration</a><small class="table-subtitle" th:text="${booking.event.venue}">Pune</small></td>
+                    <td th:text="${#temporals.format(booking.event.eventDate, 'dd MMM yyyy')}">25 Nov 2026</td>
+                    <td><strong th:text="${'₹ ' + #numbers.formatDecimal(booking.totalAmount, 1, 2)}">₹ 3,000</strong></td>
+                    <td><span class="status-pill status-pending" th:text="${booking.paymentStatus}">PENDING</span></td>
+                    <td><span class="status-pill" th:classappend="${' status-' + #strings.toLowerCase(booking.bookingStatus.name())}" th:text="${booking.bookingStatus}">PENDING</span>
+                        <div class="status-actions" th:if="${booking.bookingStatus.name() == 'PENDING'}"><form method="post" th:action="@{/bookings/{id}/status(id=${booking.id})}"><input type="hidden" name="status" value="CONFIRMED"><button class="mini-action" type="submit">Confirm</button></form><form method="post" th:action="@{/bookings/{id}/status(id=${booking.id})}"><input type="hidden" name="status" value="CANCELLED"><button class="mini-action muted-action" type="submit">Cancel</button></form></div>
+                        <div class="status-actions" th:if="${booking.bookingStatus.name() == 'CONFIRMED'}"><form method="post" th:action="@{/bookings/{id}/status(id=${booking.id})}"><input type="hidden" name="status" value="IN_PROGRESS"><button class="mini-action" type="submit">Start</button></form><form method="post" th:action="@{/bookings/{id}/status(id=${booking.id})}"><input type="hidden" name="status" value="CANCELLED"><button class="mini-action muted-action" type="submit">Cancel</button></form></div>
+                        <div class="status-actions" th:if="${booking.bookingStatus.name() == 'IN_PROGRESS'}"><form method="post" th:action="@{/bookings/{id}/status(id=${booking.id})}"><input type="hidden" name="status" value="COMPLETED"><button class="mini-action" type="submit">Mark complete</button></form></div>
+                    </td>
+                </tr></tbody>
+            </table></div>
+        </section>
+        <p class="footnote">A booking request stays pending until you confirm it here. Payment status remains pending because this MVP has no payment gateway.</p>
+    </main>
+    <footer class="site-footer"><span>Event Planner</span><span>Booking status and payment status are separate.</span></footer>
+</div></body></html>

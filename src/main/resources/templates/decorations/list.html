@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Decorations | Event Planner</title><link rel="stylesheet" th:href="@{/css/styles.css}"></head>
+<body><div class="page-shell">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <main>
+        <section class="page-heading"><div><p class="eyebrow">SMALL DETAILS, BIG FEELING</p><h1>Decoration catalogue</h1><p>Browse the demo items, then add them to an event plan.</p></div><a class="button" th:href="@{/events/new}">Choose an event</a></section>
+        <section class="card-grid item-grid">
+            <article class="catalog-card" th:each="item,stat : ${items}">
+                <div class="catalog-card-art" th:classappend="${' art-tone-' + (stat.index % 5)}"><span>✿</span><small th:text="${item.category}">Backdrop</small></div>
+                <div class="catalog-card-body"><h2 th:text="${item.itemName}">Balloon arch</h2><p th:text="${item.description}">Description</p><div class="catalog-card-footer"><strong th:text="${'₹ ' + #numbers.formatDecimal(item.price, 1, 2)}">₹ 1,800</strong><span th:text="${item.availableQuantity + ' available'}">8 available</span></div></div>
+            </article>
+        </section>
+    </main>
+    <footer class="site-footer"><span>Event Planner</span><span th:text="${#lists.size(items) + ' demo items'}">Demo catalogue</span></footer>
+</div></body></html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Events | Event Planner</title><link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body><div class="page-shell">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <main>
+        <section class="page-heading">
+            <div><p class="eyebrow">YOUR OCCASIONS</p><h1>Events</h1><p>Keep the date, place, theme and budget together.</p></div>
+            <a class="button" th:href="@{/events/new}">+ Create event</a>
+        </section>
+        <section class="panel">
+            <div class="empty-state compact" th:if="${#lists.isEmpty(events)}"><div class="empty-icon">✳</div><h3>No events yet</h3><p>Create your first event brief to get started.</p><a class="button" th:href="@{/events/new}">Create an event</a></div>
+            <div class="table-wrap" th:unless="${#lists.isEmpty(events)}">
+                <table><thead><tr><th>Event</th><th>Date</th><th>Venue</th><th>Theme</th><th>Status</th><th></th></tr></thead>
+                    <tbody><tr th:each="event : ${events}">
+                        <td><a class="table-title" th:href="@{/events/{id}(id=${event.id})}" th:text="${event.eventName}">Birthday</a><small class="table-subtitle" th:text="${event.eventType}">Birthday</small></td>
+                        <td th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy')}">20 Nov 2026</td>
+                        <td th:text="${event.venue}">Pune</td>
+                        <td th:text="${event.theme != null ? event.theme.themeName : '—'}">Birthday Spark</td>
+                        <td><span class="status-pill" th:classappend="${' status-' + #strings.toLowerCase(event.status.name())}" th:text="${event.status}">DRAFT</span></td>
+                        <td><a class="text-link" th:href="@{/events/{id}(id=${event.id})}">Open →</a></td>
+                    </tr></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer"><span>Event Planner</span><span>One event at a time.</span></footer>
+</div></body></html>

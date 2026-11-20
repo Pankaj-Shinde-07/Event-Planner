@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Themes | Event Planner</title><link rel="stylesheet" th:href="@{/css/styles.css}"></head>
+<body><div class="page-shell">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <main>
+        <section class="page-heading"><div><p class="eyebrow">FIND YOUR STARTING POINT</p><h1>Celebration themes</h1><p>Pick a mood for the day. You can change it while your event is still a draft.</p></div><a class="button" th:href="@{/events/new}">Plan an event</a></section>
+        <section class="card-grid theme-grid">
+            <article class="theme-card" th:each="theme,stat : ${themes}" th:classappend="${' theme-tone-' + (stat.index % 3)}">
+                <div class="theme-art"><span class="theme-orbit"></span><span class="theme-star">✦</span><span class="theme-flower">✿</span></div>
+                <div class="theme-info"><span class="eyebrow" th:text="${'THEME 0' + (stat.index + 1)}">THEME 01</span><h2 th:text="${theme.themeName}">Birthday Spark</h2><p th:text="${theme.description}">Description</p><div class="theme-bottom"><strong th:text="${'From ₹ ' + #numbers.formatDecimal(theme.basePrice, 1, 2)}">From ₹ 2,500</strong><a th:href="@{/events/new(themeId=${theme.id})}">Use this theme →</a></div></div>
+            </article>
+        </section>
+    </main>
+    <footer class="site-footer"><span>Event Planner</span><span>Find a look that feels right.</span></footer>
+</div></body></html>

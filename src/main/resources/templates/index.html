@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Overview | Event Planner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="page-shell">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">YOUR CELEBRATION, ONE SIMPLE PLAN</p>
+                <h1>Make the day feel<br><em>like yours.</em></h1>
+                <p class="hero-text">Plan an occasion, choose a look, and bring the details together without losing sight of the fun.</p>
+                <a class="button" th:href="@{/events/new}">Plan an event <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="hero-art" aria-label="Celebration decorations illustration" role="img">
+                <div class="sun"></div><div class="balloon balloon-one"></div><div class="balloon balloon-two"></div>
+                <div class="arch"></div><div class="table"></div><div class="flower flower-one">✿</div><div class="flower flower-two">✿</div>
+                <span class="art-note">A little planning.<br>A lot to celebrate.</span>
+            </div>
+        </section>
+
+        <section class="stats-grid" aria-label="Planner summary">
+            <article class="stat-card"><span class="stat-icon coral">✦</span><div><span class="stat-label">Planned events</span><strong th:text="${eventCount}">0</strong></div></article>
+            <article class="stat-card"><span class="stat-icon green">◷</span><div><span class="stat-label">Booking requests</span><strong th:text="${bookingCount}">0</strong></div></article>
+            <article class="stat-card"><span class="stat-icon yellow">◎</span><div><span class="stat-label">Pending review</span><strong th:text="${pendingBookingCount}">0</strong></div></article>
+            <article class="stat-card"><span class="stat-icon blue">⌂</span><div><span class="stat-label">Ready to explore</span><strong><span th:text="${themeCount}">0</span> <small>themes</small></strong></div></article>
+        </section>
+
+        <section class="section-block">
+            <div class="section-heading">
+                <div><p class="eyebrow">KEEP IT MOVING</p><h2>Upcoming events</h2></div>
+                <a class="text-link" th:href="@{/events}">See all events <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="empty-state" th:if="${#lists.isEmpty(upcomingEvents)}">
+                <div class="empty-icon">✳</div><h3>Your next celebration starts here</h3>
+                <p>Create an event brief, then choose a theme and decorations that fit.</p>
+                <a class="button button-outline" th:href="@{/events/new}">Create your first event</a>
+            </div>
+            <div class="event-list" th:unless="${#lists.isEmpty(upcomingEvents)}">
+                <a class="event-row" th:each="event : ${upcomingEvents}" th:href="@{/events/{id}(id=${event.id})}">
+                    <span class="date-tile"><strong th:text="${#temporals.format(event.eventDate, 'dd')}">20</strong><small th:text="${#temporals.format(event.eventDate, 'MMM')}">NOV</small></span>
+                    <span class="event-row-main"><strong th:text="${event.eventName}">Celebration</strong><small><span th:text="${event.eventType}">Birthday</span> · <span th:text="${event.venue}">Pune</span></small></span>
+                    <span class="event-row-theme" th:text="${event.theme != null ? event.theme.themeName : 'Theme to choose'}">Birthday Spark</span>
+                    <span class="status-pill" th:classappend="${' status-' + #strings.toLowerCase(event.status.name())}" th:text="${event.status}">DRAFT</span>
+                    <span class="row-arrow" aria-hidden="true">→</span>
+                </a>
+            </div>
+        </section>
+
+        <section class="quick-links">
+            <a class="quick-card" th:href="@{/themes}"><span class="quick-icon">✳</span><span><strong>Browse themes</strong><small>Start with the feeling</small></span><b>→</b></a>
+            <a class="quick-card" th:href="@{/decorations}"><span class="quick-icon green">✿</span><span><strong>Explore decorations</strong><small th:text="${itemCount + ' items to choose from'}">Items to choose from</small></span><b>→</b></a>
+            <a class="quick-card" th:href="@{/bookings}"><span class="quick-icon blue">◷</span><span><strong>Review booking requests</strong><small>Follow each request</small></span><b>→</b></a>
+        </section>
+    </main>
+    <footer class="site-footer"><span>Event Planner</span><span>A simple space to plan meaningful moments.</span></footer>
+</div>
+</body>
+</html>
